@@ -1,0 +1,80 @@
+﻿@model SobelAlgImage.Models.ImageModelVM;
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="text-center">
+    <h4 class="display-4">Load file</h4>
+</div>
+
+<div class="container bg-bottom-grey pb-2">
+    <div class="row">
+        <div class="col-md-9">
+            <form asp-action="CreateImage" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="ImgModel.Id" />
+                <input type="hidden" asp-for="ImgModel.SourceTransform" />
+                <input type="hidden" asp-for="ImgModel.Title" />
+
+                <div class="form-row">
+                    <div class="form-group col-md-5">
+                        <label class="control-label">Amount of parallel processes</label>
+                        <input type="number" asp-for="ImgModel.AmountOfThreads" class="form-control">
+                        <span asp-validation-for="ImgModel.AmountOfThreads" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-7 pl-5">
+                        <label class="control-label w-100">
+                            Choose the img file
+                            <span class="text-danger font-weight-bold" id="source-original-error"></span>
+                        </label>
+                        <input type="file" name="files" id="uploadBox" multiple class="form-conrtol" />
+                    </div>
+                </div>
+                <div class="form-group btn-section">
+                    <input type="submit" class="btn btn-success btn-block" value="Processing" onclick="return validateInput()">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-3">
+            <img src="@Model.ImgModel.SourceOriginal" alt="" class="image-display-editor" style="width:100%;" />
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="text-center mt-5">
+        <h5 class="display-4">Display Result</h5>
+    </div>
+
+    <div class="result-data">
+        @foreach (var item in Model.ImgModels)
+        {
+            <div class="result-data-item py-2" id="result-item_@item.Id">
+                <div class="pr-3">
+                    <a href="@item.SourceOriginal" target="_blank">
+                        <img src="@item.SourceOriginal" class="img-fluid img-thumbnail">
+                    </a>
+                </div>
+                <div class="pr-3">
+                    <a href="@item.SourceTransform" target="_blank">
+                        <img src="@item.SourceTransform" class="img-fluid img-thumbnail">
+                    </a>
+                </div>
+                <div class="">
+                    <button class="btn btn-danger btn-block" onclick='deleteAction("Home", "@item.Id")'>Delete Image</button>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/site.js" asp-append-version="true"></script>
+}
