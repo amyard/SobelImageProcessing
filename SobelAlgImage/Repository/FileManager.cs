@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using SobelAlgImage.Interfaces;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SobelAlgImage.Repository
@@ -44,16 +46,6 @@ namespace SobelAlgImage.Repository
             string webRootPath = _hostEnvironment.WebRootPath;
             string rootPathToImage = imageBasePath + filename + extension;
             string fullPath = webRootPath + rootPathToImage;
-
-            // TODO - DELETE PRIVATE METHOD IN THE BOTTOM
-
-            // Save the bitmap as a JPEG file with quality level 75.
-            //Encoder myEncoder = Encoder.Quality;
-            //ImageCodecInfo myImageCodecInfo = GetEncoderInfo("image/jpeg");
-            //EncoderParameters myEncoderParameters = new EncoderParameters(1);
-            //EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 75L);
-            //myEncoderParameters.Param[0] = myEncoderParameter;
-            //bitMap.Save("Shapes075.jpg", myImageCodecInfo, myEncoderParameters);
 
             using (MemoryStream memory = new MemoryStream())
             {
@@ -97,6 +89,57 @@ namespace SobelAlgImage.Repository
             return imageResultPath + fileName + extension;
         }
 
+        public Bitmap MergeBitmapsInOne(IEnumerable<Bitmap> images)
+        {
+            var enumerable = images as IList<Bitmap> ?? images.ToList();
+
+            var width = 0;
+            var height = 0;
+
+            foreach (var image in enumerable)
+            {
+                width += image.Width;
+                height = image.Height > height
+                    ? image.Height
+                    : height;
+            }
+
+            width = width - (4*2);
+
+            var bitmap = new Bitmap(width, height);
+            using (var g = Graphics.FromImage(bitmap))
+            {
+                var localWidth = 0;
+                foreach (var image in enumerable)
+                {
+                    g.DrawImage(image, localWidth, 0);
+                    localWidth += image.Width;
+
+                    // remove white border between neighborn pictures
+                    localWidth -= 2;
+                }
+            }
+            return bitmap;
+        }
+
+
+
+
+        public void BitmapSaveTest(Bitmap bitmap)
+        {
+            // Save the bitmap as a JPEG file with quality level 75.
+            Encoder myEncoder = Encoder.Quality;
+            ImageCodecInfo myImageCodecInfo = GetEncoderInfo("image/jpeg");
+            EncoderParameters myEncoderParameters = new EncoderParameters(1);
+            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 75L);
+            myEncoderParameters.Param[0] = myEncoderParameter;
+
+            bitmap.Save("BitmapTestSaving.jpg", myImageCodecInfo, myEncoderParameters);
+
+            bitmap.Dispose();
+        }
+
+
 
         #region private methods
         private static ImageCodecInfo GetEncoderInfo(string mimeType)
@@ -111,6 +154,7 @@ namespace SobelAlgImage.Repository
             }
             return null;
         }
+
         #endregion
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -10,7 +9,6 @@ namespace SobelAlgImage.Helpers
     {
         private static Bitmap bmp;
 
-        // send image and call process
         public static Bitmap SobelProcessStart(string imgPath, int algorithmChooser)
         {
             Bitmap imageSource = (Bitmap)Image.FromFile(imgPath);

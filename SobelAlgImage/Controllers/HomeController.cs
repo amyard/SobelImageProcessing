@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -96,6 +101,12 @@ namespace SobelAlgImage.Controllers
 
             img.SourceTransformSlower = _fileManager.SaveBitMapToImage(imgProcessSlower, HelperConstants.TransformImageResultPath, fileName + "_slower");
             img.SourceTransformFaster = _fileManager.SaveBitMapToImage(imgProcessFaster, HelperConstants.TransformImageResultPath, fileName + "_faster");
+
+            // есть склейка между картинками
+            // imgProcessSlower - возвращает картинку с какими-то белыми краями по X
+            IEnumerable<Bitmap> collectedImages = new List<Bitmap> { imgProcessSlower, imgProcessFaster, imgProcessFaster, imgProcessFaster };
+            Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(collectedImages);
+            _fileManager.BitmapSaveTest(resultBitmap);
 
             return img;
         }
