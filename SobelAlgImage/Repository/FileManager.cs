@@ -45,6 +45,16 @@ namespace SobelAlgImage.Repository
             string rootPathToImage = imageBasePath + filename + extension;
             string fullPath = webRootPath + rootPathToImage;
 
+            // TODO - DELETE PRIVATE METHOD IN THE BOTTOM
+
+            // Save the bitmap as a JPEG file with quality level 75.
+            //Encoder myEncoder = Encoder.Quality;
+            //ImageCodecInfo myImageCodecInfo = GetEncoderInfo("image/jpeg");
+            //EncoderParameters myEncoderParameters = new EncoderParameters(1);
+            //EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 75L);
+            //myEncoderParameters.Param[0] = myEncoderParameter;
+            //bitMap.Save("Shapes075.jpg", myImageCodecInfo, myEncoderParameters);
+
             using (MemoryStream memory = new MemoryStream())
             {
                 using (FileStream fs = new FileStream(fullPath, FileMode.Create, FileAccess.ReadWrite))

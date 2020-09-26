@@ -62,9 +62,10 @@ namespace SobelAlgImage.Controllers
                 return Json(new { success = false, message = "Error while deleting" });
             }
 
-            // delete images and comments -> post
+            // delete images
             _fileManager.RemoveImage(img.SourceOriginal);
-            _fileManager.RemoveImage(img.SourceTransform);
+            _fileManager.RemoveImage(img.SourceTransformSlower);
+            _fileManager.RemoveImage(img.SourceTransformFaster);
 
 
             await _unitOfWork.ImageSobelAlg.DeleteImageAsync(id);
@@ -90,10 +91,11 @@ namespace SobelAlgImage.Controllers
             img.AmountOfThreads = img.AmountOfThreads ?? HelperConstants.AmountOfProcesses;
             img.SourceOriginal = await _fileManager.SaveImage(files, HelperConstants.OriginalImageBasePath, HelperConstants.OriginalImageResultPath, fileName);
 
-            Bitmap imgProcess = SobelAlgorithm.SobelProcessStart(_fileManager.ImageFullPath(img.SourceOriginal));
-            img.SourceTransform = _fileManager.SaveBitMapToImage(imgProcess, HelperConstants.TransformImageResultPath, fileName);
+            Bitmap imgProcessSlower = SobelAlgorithm.SobelProcessStart(_fileManager.ImageFullPath(img.SourceOriginal), 1);
+            Bitmap imgProcessFaster = SobelAlgorithm.SobelProcessStart(_fileManager.ImageFullPath(img.SourceOriginal), 2);
 
-            imgProcess.Dispose();
+            img.SourceTransformSlower = _fileManager.SaveBitMapToImage(imgProcessSlower, HelperConstants.TransformImageResultPath, fileName + "_slower");
+            img.SourceTransformFaster = _fileManager.SaveBitMapToImage(imgProcessFaster, HelperConstants.TransformImageResultPath, fileName + "_faster");
 
             return img;
         }

@@ -15,7 +15,8 @@
             <form asp-action="CreateImage" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="ImgModel.Id" />
-                <input type="hidden" asp-for="ImgModel.SourceTransform" />
+                <input type="hidden" asp-for="ImgModel.SourceTransformSlower" />
+                <input type="hidden" asp-for="ImgModel.SourceTransformFaster" />
                 <input type="hidden" asp-for="ImgModel.Title" />
 
                 <div class="form-row">
@@ -51,6 +52,23 @@
     </div>
 
     <div class="result-data">
+        <div class="result-data-item py-2">
+            <div class="pr-3">
+                <h5>Original</h5>
+            </div>
+            <div class="pr-3">
+                <h5>SobelFilter <span class="font-weight-bold">(slower)</span></h5>
+            </div>
+            <div class="pr-3">
+                <h5>ConvolutionFilter <span class="font-weight-bold">(faster)</span></h5>
+            </div>
+            <div>
+                <h5 class="text-center">Action</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="result-data">
         @foreach (var item in Model.ImgModels)
         {
             <div class="result-data-item py-2" id="result-item_@item.Id">
@@ -60,8 +78,13 @@
                     </a>
                 </div>
                 <div class="pr-3">
-                    <a href="@item.SourceTransform" target="_blank">
-                        <img src="@item.SourceTransform" class="img-fluid img-thumbnail">
+                    <a href="@item.SourceTransformSlower" target="_blank">
+                        <img src="@item.SourceTransformSlower" class="img-fluid img-thumbnail">
+                    </a>
+                </div>
+                <div class="pr-3">
+                    <a href="@item.SourceTransformFaster" target="_blank">
+                        <img src="@item.SourceTransformFaster" class="img-fluid img-thumbnail">
                     </a>
                 </div>
                 <div class="">

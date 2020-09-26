@@ -5,7 +5,8 @@
         public int Id { get; set; }
         public string Title { get; set; } = null;
         public string SourceOriginal { get; set; }
-        public string SourceTransform { get; set; } = null;
+        public string SourceTransformSlower { get; set; } = null;
+        public string SourceTransformFaster { get; set; } = null;
         public int? AmountOfThreads { get; set; }
     }
 }
