@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using SobelAlgImage.Interfaces;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -15,6 +17,12 @@ namespace SobelAlgImage.Repository
             _hostEnvironment = hostEnvironment;
         }
 
+        public string ImageFullPath(string imgPath)
+        {
+            string webRootPath = _hostEnvironment.WebRootPath;
+
+            return webRootPath + imgPath;
+        }
 
         public bool RemoveImage(string filePath)
         {
@@ -30,6 +38,30 @@ namespace SobelAlgImage.Repository
             return true;
         }
 
+        public string SaveBitMapToImage(Bitmap bitMap, string imageBasePath, string filename)
+        {
+            string extension = ".jpg";
+            string webRootPath = _hostEnvironment.WebRootPath;
+            string rootPathToImage = imageBasePath + filename + extension;
+            string fullPath = webRootPath + rootPathToImage;
+
+            using (MemoryStream memory = new MemoryStream())
+            {
+                using (FileStream fs = new FileStream(fullPath, FileMode.Create, FileAccess.ReadWrite))
+                {
+                    bitMap.Save(memory, ImageFormat.Jpeg);
+                    byte[] bytes = memory.ToArray();
+                    fs.Write(bytes, 0, bytes.Length);
+
+                    ((System.IDisposable)fs).Dispose();
+                }
+
+                ((System.IDisposable)memory).Dispose();
+            }
+
+            return rootPathToImage;
+        }
+
         public async Task<string> SaveImage(IFormFileCollection files, string imageBasePath, string imageResultPath, string fileName)
         {
             string webRootPath = _hostEnvironment.WebRootPath;                  // get path to image folder
@@ -38,9 +70,37 @@ namespace SobelAlgImage.Repository
 
             using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
             {
-                await files[0].CopyToAsync(fileStreams);
+                // microsoft docs
+                try
+                {
+                    await files[0].CopyToAsync(fileStreams);
+                }
+                finally
+                {
+                    if (fileStreams != null)
+                        ((System.IDisposable)fileStreams).Dispose();
+                }
+
+                fileStreams.Close();
             }
+
             return imageResultPath + fileName + extension;
         }
+
+
+        #region private methods
+        private static ImageCodecInfo GetEncoderInfo(string mimeType)
+        {
+            int j;
+            ImageCodecInfo[] encoders;
+            encoders = ImageCodecInfo.GetImageEncoders();
+            for (j = 0; j < encoders.Length; ++j)
+            {
+                if (encoders[j].MimeType == mimeType)
+                    return encoders[j];
+            }
+            return null;
+        }
+        #endregion
     }
 }

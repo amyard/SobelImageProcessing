@@ -438,3 +438,8 @@ $RECYCLE.BIN/
 sobel.db
 .vscode/launch.json
 .vscode/tasks.json
+*.jpg
+*.jgeg
+*.png
+*.bmp
+*.webp

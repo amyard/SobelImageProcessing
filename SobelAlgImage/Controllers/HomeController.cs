@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SobelAlgImage.Data;
+using SobelAlgImage.Helpers;
 using SobelAlgImage.Interfaces;
 using SobelAlgImage.Models;
 
@@ -12,13 +13,7 @@ namespace SobelAlgImage.Controllers
 {
     public class HomeController : Controller
     {
-        #region private strings and constructor
-        private readonly string originalImageBasePath = @"images/original";
-        private readonly string originalImageResultPath = @"\images\original\";
-        private readonly string transformImageBasePath = @"images/transform";
-        private readonly string transformImageResultPath = @"\images\transform\";
-        private readonly int amountOfProcesses = 3;
-
+        #region constructor
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileManager _fileManager;     // for upload images on server
@@ -92,9 +87,13 @@ namespace SobelAlgImage.Controllers
             string fileName = Guid.NewGuid().ToString();
 
             img.Title = fileName;
-            img.AmountOfThreads = img.AmountOfThreads ?? amountOfProcesses;
-            img.SourceOriginal = await _fileManager.SaveImage(files, originalImageBasePath, originalImageResultPath, fileName);
-            img.SourceTransform = await _fileManager.SaveImage(files, transformImageBasePath, transformImageResultPath, fileName);
+            img.AmountOfThreads = img.AmountOfThreads ?? HelperConstants.AmountOfProcesses;
+            img.SourceOriginal = await _fileManager.SaveImage(files, HelperConstants.OriginalImageBasePath, HelperConstants.OriginalImageResultPath, fileName);
+
+            Bitmap imgProcess = SobelAlgorithm.SobelProcessStart(_fileManager.ImageFullPath(img.SourceOriginal));
+            img.SourceTransform = _fileManager.SaveBitMapToImage(imgProcess, HelperConstants.TransformImageResultPath, fileName);
+
+            imgProcess.Dispose();
 
             return img;
         }
