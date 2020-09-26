@@ -122,6 +122,34 @@ namespace SobelAlgImage.Repository
             return bitmap;
         }
 
+        public IEnumerable<Bitmap> SplitBitmapsOnManyBitmaps(Bitmap bitmap)
+        {
+            // slice bitmap on small parts by Y - easy to merge them  - WORKED!!!
+            int tiles = 2;
+            var width = bitmap.Width / tiles;
+            var height = bitmap.Height;
+
+            List<Bitmap> collectedBitmaps = new List<Bitmap>();
+
+            foreach (var i in Enumerable.Range(0, tiles))
+            {
+                Bitmap newBitmap = new Bitmap(width, height);
+
+                Rectangle cloneRect = new Rectangle(i * width, 0, width, height);
+                PixelFormat format = bitmap.PixelFormat;
+                Bitmap cloneBitmap = bitmap.Clone(cloneRect, format);
+
+                using (var g = Graphics.FromImage(newBitmap))
+                {
+                    g.DrawImage(cloneBitmap, 0, 0);
+                }
+
+                collectedBitmaps.Add(newBitmap);
+            }
+
+            return collectedBitmaps;
+        }
+
 
 
 
