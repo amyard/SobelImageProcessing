@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using SobelAlgImage.Data;
 using SobelAlgImage.Interfaces;
 using SobelAlgImage.Repository;
+using SobelAlgImage.Services;
 
 namespace SobelAlgImage
 {
@@ -20,11 +21,9 @@ namespace SobelAlgImage
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // register our Repository action
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            // save images
+            services.AddScoped<IImageAlgorithmRepo, ImageAlgorithmRepo>();
             services.AddTransient<IFileManager, FileManager>();
+            services.AddTransient<IGeneralService, GeneralService>();
 
 
             // usign sqlite. db will created in root folder. 

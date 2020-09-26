@@ -10,5 +10,7 @@ namespace SobelAlgImage.Interfaces
         Task CreateImageAsync(ImageModel img);
         Task<IReadOnlyList<ImageModel>> GetListOfImagesAsync();
         Task DeleteImageAsync(int id);
+
+        Task<bool> SaveChangesAsync();
     }
 }

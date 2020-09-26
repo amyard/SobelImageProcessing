@@ -39,5 +39,14 @@ namespace SobelAlgImage.Repository
             var objData = await _context.Set<ImageModel>().FindAsync(id);
             _context.Remove(objData);
         }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
