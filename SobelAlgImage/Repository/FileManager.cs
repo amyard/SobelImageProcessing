@@ -104,7 +104,7 @@ namespace SobelAlgImage.Repository
                     : height;
             }
 
-            width = width - (4*2);
+            width = width - (images.Count()*1);
 
             var bitmap = new Bitmap(width, height);
             using (var g = Graphics.FromImage(bitmap))

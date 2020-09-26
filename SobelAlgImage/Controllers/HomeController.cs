@@ -102,11 +102,38 @@ namespace SobelAlgImage.Controllers
             img.SourceTransformSlower = _fileManager.SaveBitMapToImage(imgProcessSlower, HelperConstants.TransformImageResultPath, fileName + "_slower");
             img.SourceTransformFaster = _fileManager.SaveBitMapToImage(imgProcessFaster, HelperConstants.TransformImageResultPath, fileName + "_faster");
 
-            // есть склейка между картинками
+            // есть склейка между картинками - WORKED!!!
             // imgProcessSlower - возвращает картинку с какими-то белыми краями по X
-            IEnumerable<Bitmap> collectedImages = new List<Bitmap> { imgProcessSlower, imgProcessFaster, imgProcessFaster, imgProcessFaster };
-            Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(collectedImages);
-            _fileManager.BitmapSaveTest(resultBitmap);
+            //IEnumerable<Bitmap> collectedImages = new List<Bitmap> { imgProcessSlower, imgProcessFaster, imgProcessFaster, imgProcessFaster };
+            //Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(collectedImages);
+            //_fileManager.BitmapSaveTest(resultBitmap);
+
+
+            // slice bitmap on small parts by Y - easy to merge them  - WORKED!!!
+            //int tiles = 2;
+            //var width = imgProcessFaster.Width / tiles;
+            //var height = imgProcessFaster.Height;
+
+            //List<Bitmap> collectedBitmaps = new List<Bitmap> ();
+
+            //foreach (var i in Enumerable.Range(0, tiles))
+            //{
+            //    Bitmap newBitmap = new Bitmap(width, height);
+
+            //    Rectangle cloneRect = new Rectangle(i*width, 0, width, height);
+            //    PixelFormat format = imgProcessSlower.PixelFormat;
+            //    Bitmap cloneBitmap = imgProcessSlower.Clone(cloneRect, format);
+
+            //    using (var g = Graphics.FromImage(newBitmap))
+            //    {
+            //        g.DrawImage(cloneBitmap, 0, 0);
+            //    }
+
+            //    collectedBitmaps.Add(newBitmap);
+            //}
+
+            //Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(collectedBitmaps);
+            //_fileManager.BitmapSaveTest(resultBitmap);
 
             return img;
         }
