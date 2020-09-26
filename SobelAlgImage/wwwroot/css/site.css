@@ -91,3 +91,8 @@ body {
 .result-data-item img {
     width: 80%;
 }
+
+.general-section {
+    width: 90%;
+    margin-left: 5%;
+}
