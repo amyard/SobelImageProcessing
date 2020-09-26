@@ -8,51 +8,133 @@ namespace SobelAlgImage.Helpers
 {
     public class SobelAlgorithm
     {
-        Bitmap bmp;
-
-
-        //Sobel operator kernel for horizontal pixel changes
-        private static double[,] xSobel
-        {
-            get
-            {
-                return new double[,]
-                {
-                    { -1, 0, 1 },
-                    { -2, 0, 2 },
-                    { -1, 0, 1 }
-                };
-            }
-        }
-
-        //Sobel operator kernel for vertical pixel changes
-        private static double[,] ySobel
-        {
-            get
-            {
-                return new double[,]
-                {
-                    {  1,  2,  1 },
-                    {  0,  0,  0 },
-                    { -1, -2, -1 }
-                };
-            }
-        }
-
+        private static int b, g, r, r_x, g_x, b_x, r_y, g_y, b_y, location, location2;
 
         // send image and call process
         public static Bitmap SobelProcessStart(string imgPath)
         {
             Bitmap imageSource = (Bitmap)Image.FromFile(imgPath);
 
-            Bitmap bmp = ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
+            //Bitmap bmp = ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
+            Bitmap bmp = SobelFilter(imageSource);
 
             return bmp;
         }
 
 
         // generale process
-        //private static Bitmap ConvolutionFilter(Bitmap sourceImage, double[,] xkernel, double[,] ykernel, double factor = 1, int bias = 0, bool grayscale = false)
+        private static Bitmap SobelFilter(Bitmap sourceImage)
+        {
+            sbyte[,] weights_x = new sbyte[,] { { 1, 0, -1 }, { 2, 0, -2 }, { 1, 0, -1 } };
+            sbyte[,] weights_y = new sbyte[,] { { 1, 2, 1 }, { 0, 0, 0 }, { -1, -2, -1 } };
+
+            //Image dimensions stored in variables for convenience
+            int width = sourceImage.Width;
+            int height = sourceImage.Height;
+
+            //Lock source image bits into system memory
+            BitmapData ImageData = sourceImage.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            //Get the total number of bytes in your image - 32 bytes per pixel x image width x image height -> for 32bpp images
+            int bytes = ImageData.Stride * ImageData.Height;
+
+            //Create byte arrays to hold pixel information of your image
+            byte[] buffer = new byte[bytes];
+            byte[] resultBuffer = new byte[bytes];
+
+            //Get the address of the first pixel data
+            IntPtr pointer = ImageData.Scan0;
+
+            //Copy image data to one of the byte arrays
+            Marshal.Copy(pointer, buffer, 0, buffer.Length);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width * 3; x += 3)
+                {
+                    //reset the gradients in x-direcion values
+                    r_x = g_x = b_x = 0;
+
+                    //reset the gradients in y-direction values
+                    r_y = g_y = b_y = 0;
+
+                    //to get the location of any pixel >> location = x + y * Stride
+                    location = x + y * ImageData.Stride; 
+
+                    for (int yy = -(int)Math.Floor(weights_y.GetLength(0) / 2.0d), yyy = 0; yy <= (int)Math.Floor(weights_y.GetLength(0) / 2.0d); yy++, yyy++)
+                    {
+                        //to prevent crossing the bounds of the array
+                        if (y + yy >= 0 && y + yy < height) 
+                        {
+                            for (int xx = -(int)Math.Floor(weights_x.GetLength(1) / 2.0d) * 3, xxx = 0; xx <= (int)Math.Floor(weights_x.GetLength(1) / 2.0d) * 3; xx += 3, xxx++)
+                            {
+                                //to prevent crossing the bounds of the array
+                                if (x + xx >= 0 && x + xx <= width * 3 - 3) 
+                                {
+                                    //to get the location of any pixel >> location = x + y * Stride
+                                    location2 = x + xx + (yy + y) * ImageData.Stride;
+                                    sbyte weight_x = weights_x[yyy, xxx];
+                                    sbyte weight_y = weights_y[yyy, xxx];
+
+                                    // applying the same weight to all channels
+                                    b_x += buffer[location2] * weight_x;
+                                    g_x += buffer[location2 + 1] * weight_x; //G_X
+                                    r_x += buffer[location2 + 2] * weight_x;
+                                    b_y += buffer[location2] * weight_y;
+                                    g_y += buffer[location2 + 1] * weight_y;//G_Y
+                                    r_y += buffer[location2 + 2] * weight_y;
+                                }
+                            }
+                        }
+                    }
+
+                    //getting the magnitude for each channel
+                    b = (int)Math.Sqrt(Math.Pow(b_x, 2) + Math.Pow(b_y, 2));
+                    g = (int)Math.Sqrt(Math.Pow(g_x, 2) + Math.Pow(g_y, 2));   //G
+                    r = (int)Math.Sqrt(Math.Pow(r_x, 2) + Math.Pow(r_y, 2));
+
+                    if (b > 255) b = 255;
+                    if (g > 255) g = 255;
+                    if (r > 255) r = 255;
+
+                    // getting grayscale value
+                    int grayscale = (b + g + r) / 3;
+
+                    //thresholding to clean up the background
+                    //if (grayscale < 80) grayscale = 0;
+                    resultBuffer[location] = (byte)grayscale;
+                    resultBuffer[location + 1] = (byte)grayscale;
+                    resultBuffer[location + 2] = (byte)grayscale;
+
+                    ////  thresholding to clean up the background - if uncommit - will add some colorsss
+                    //if (b < 100) b = 0;
+                    //if (g < 100) g = 0;
+                    //if (r < 100) r = 0;
+
+                    //buffer2[location] = (byte)b;
+                    //buffer2[location + 1] = (byte)g;
+                    //buffer2[location + 2] = (byte)r;
+                }
+            }
+
+            //Create new bitmap which will hold the processed data
+            Bitmap resultImage = new Bitmap(width, height);
+
+            //Lock bits into system memory
+            BitmapData resultData = resultImage.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+            //Copy from byte array that holds processed data to bitmap
+            Marshal.Copy(resultBuffer, 0, ImageData.Scan0, resultBuffer.Length);
+
+            //Unlock bits from system memory
+            resultImage.UnlockBits(resultData);
+
+            //Return processed image
+            return resultImage;
+        }
+
+
+        // ConvolutionFilter and SobelFilter - almost same alggorithms
         private static Bitmap ConvolutionFilter(Bitmap sourceImage, double[,] xkernel, double[,] ykernel, double factor = 1, int bias = 0, bool grayscale = false)
         {
             //Image dimensions stored in variables for convenience
@@ -175,5 +257,37 @@ namespace SobelAlgImage.Helpers
             //Return processed image
             return resultImage;
         }
+
+
+        #region private methods
+        //Sobel operator kernel for horizontal pixel changes
+        private static double[,] xSobel
+        {
+            get
+            {
+                return new double[,]
+                {
+                    { -1, 0, 1 },
+                    { -2, 0, 2 },
+                    { -1, 0, 1 }
+                };
+            }
+        }
+
+        //Sobel operator kernel for vertical pixel changes
+        private static double[,] ySobel
+        {
+            get
+            {
+                return new double[,]
+                {
+                    {  1,  2,  1 },
+                    {  0,  0,  0 },
+                    { -1, -2, -1 }
+                };
+            }
+        }
+
+        #endregion
     }
 }
