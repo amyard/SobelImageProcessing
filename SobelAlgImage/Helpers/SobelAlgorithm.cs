@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -8,6 +9,12 @@ namespace SobelAlgImage.Helpers
     public class SobelAlgorithm
     {
         private static Bitmap bmp;
+
+        public static void SobelProcessTaskChooser(Bitmap imageSource, int algorithmChooser, int positionInList, List<Bitmap> resultedListOfBitmaps)
+        {
+            Bitmap bmp = algorithmChooser == 1 ? SobelFilter(imageSource) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
+            resultedListOfBitmaps[positionInList] = bmp;
+        }
 
         public static Bitmap SobelProcessStart(string imgPath, int algorithmChooser)
         {

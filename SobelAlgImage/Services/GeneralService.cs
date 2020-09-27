@@ -3,7 +3,9 @@ using SobelAlgImage.Helpers;
 using SobelAlgImage.Interfaces;
 using SobelAlgImage.Models;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SobelAlgImage.Services
@@ -23,6 +25,9 @@ namespace SobelAlgImage.Services
         {
             // generate new file name
             string fileName = Guid.NewGuid().ToString();
+            int tiles = img.AmountOfThreads ?? 4;
+
+            img.AmountOfThreads = tiles;
 
             img.Title = fileName;
             img.AmountOfThreads = img.AmountOfThreads ?? HelperConstants.AmountOfProcesses;
@@ -34,15 +39,28 @@ namespace SobelAlgImage.Services
             img.SourceTransformSlower = _fileManager.SaveBitMapToImage(imgProcessSlower, HelperConstants.TransformImageResultPath, fileName + "_slower");
             img.SourceTransformFaster = _fileManager.SaveBitMapToImage(imgProcessFaster, HelperConstants.TransformImageResultPath, fileName + "_faster");
 
+
             await _imageAlgorithm.CreateImageAsync(img);
             await _imageAlgorithm.SaveChangesAsync();
 
-            //// split one bitmap by Y on many small bitmaps
-            //IEnumerable<Bitmap> collectedBitmaps = _fileManager.SplitBitmapsOnManyBitmaps(imgProcessFaster);
+            // split one bitmap by Y on many small bitmaps
+            IEnumerable<Bitmap> collectedBitmaps = _fileManager.SplitBitmapsOnManyBitmaps(imgProcessFaster, tiles);
 
-            //// есть склейка между картинками. imgProcessSlower - возвращает картинку с какими - то белыми краями по X
-            //Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(collectedBitmaps);
-            //_fileManager.BitmapSaveTest(resultBitmap);
+            // create our tasks
+            var tasks = new List<Task>();
+            List<Bitmap> resultedListOfBitmaps = new Bitmap[tiles].ToList();
+
+            foreach (var i in Enumerable.Range(0, tiles))
+                tasks.Add(new Task(() => SobelAlgorithm.SobelProcessTaskChooser(collectedBitmaps.ToList()[i], 2, i, resultedListOfBitmaps)));
+
+            foreach (var t in tasks)
+                t.Start();
+
+            Task.WaitAll(tasks.ToArray());
+
+            // есть склейка между картинками. imgProcessSlower - возвращает картинку с какими - то белыми краями по X
+            Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(collectedBitmaps);
+            _fileManager.BitmapSaveTest(resultBitmap);
         }
 
         public async Task<JsonMessageModel> DeleteImage(int id)

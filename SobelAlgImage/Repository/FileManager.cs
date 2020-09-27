@@ -104,7 +104,7 @@ namespace SobelAlgImage.Repository
                     : height;
             }
 
-            width = width - (images.Count()*1);
+            width = width - (images.Count()*2);
 
             var bitmap = new Bitmap(width, height);
             using (var g = Graphics.FromImage(bitmap))
@@ -122,10 +122,9 @@ namespace SobelAlgImage.Repository
             return bitmap;
         }
 
-        public IEnumerable<Bitmap> SplitBitmapsOnManyBitmaps(Bitmap bitmap)
+        public IEnumerable<Bitmap> SplitBitmapsOnManyBitmaps(Bitmap bitmap, int tiles)
         {
             // slice bitmap on small parts by Y - easy to merge them  - WORKED!!!
-            int tiles = 2;
             var width = bitmap.Width / tiles;
             var height = bitmap.Height;
 
