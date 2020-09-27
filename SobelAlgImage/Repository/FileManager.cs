@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using SobelAlgImage.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -89,12 +90,13 @@ namespace SobelAlgImage.Repository
             return imageResultPath + fileName + extension;
         }
 
-        public Bitmap MergeBitmapsInOne(IEnumerable<Bitmap> images)
+        public Bitmap MergeBitmapsInOne(IEnumerable<Bitmap> images, int algorithmChooser)
         {
             var enumerable = images as IList<Bitmap> ?? images.ToList();
 
             var width = 0;
             var height = 0;
+            int removeWhiteBorders = algorithmChooser == 1 ? 1 : 2;
 
             foreach (var image in enumerable)
             {
@@ -104,7 +106,7 @@ namespace SobelAlgImage.Repository
                     : height;
             }
 
-            width = width - (images.Count()*2);
+            //width = width - (images.Count()*1);
 
             var bitmap = new Bitmap(width, height);
             using (var g = Graphics.FromImage(bitmap))
@@ -116,7 +118,7 @@ namespace SobelAlgImage.Repository
                     localWidth += image.Width;
 
                     // remove white border between neighborn pictures
-                    localWidth -= 2;
+                    localWidth -= removeWhiteBorders;
                 }
             }
             return bitmap;
@@ -181,7 +183,6 @@ namespace SobelAlgImage.Repository
             }
             return null;
         }
-
         #endregion
     }
 }

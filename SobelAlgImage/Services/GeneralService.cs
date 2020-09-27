@@ -14,6 +14,7 @@ namespace SobelAlgImage.Services
     {
         private readonly IFileManager _fileManager;
         private readonly IImageAlgorithmRepo _imageAlgorithm;
+        Bitmap grey50, grey80, grey100, convolutionTasks;
 
         public GeneralService(IFileManager fileManager, IImageAlgorithmRepo imageAlgorithm)
         {
@@ -37,11 +38,20 @@ namespace SobelAlgImage.Services
             string fullPath = _fileManager.ImageFullPath(img.SourceOriginal);
             Bitmap imageSource = (Bitmap)Image.FromFile(fullPath);
 
-            Bitmap grey50 = ConvertImageWithTasks(imageSource, tiles, 1, 50);
-            Bitmap grey80 = ConvertImageWithTasks(imageSource, tiles, 1, 80);
-            Bitmap grey100 = ConvertImageWithTasks(imageSource, tiles, 1, 100);
-            Bitmap convolutionTasks = ConvertImageWithTasks(imageSource, tiles, 2, 0);
-            //Bitmap convolutionWithOutTasks = SobelAlgorithm.SobelProcessStart(imageSource, 2, 0);
+            if (tiles == 1)
+            {
+                grey50 = SobelAlgorithm.SobelProcessStart(imageSource, 1, 50);
+                grey80 = SobelAlgorithm.SobelProcessStart(imageSource, 1, 80);
+                grey100 = SobelAlgorithm.SobelProcessStart(imageSource, 1, 100);
+                convolutionTasks = SobelAlgorithm.SobelProcessStart(imageSource, 2, 0);
+            }
+            else
+            { 
+                grey50 = ConvertImageWithTasks(imageSource, tiles, 1, 50);
+                grey80 = ConvertImageWithTasks(imageSource, tiles, 1, 80);
+                grey100 = ConvertImageWithTasks(imageSource, tiles, 1, 100);
+                convolutionTasks = ConvertImageWithTasks(imageSource, tiles, 2, 0);
+            }
 
             img.SourceGrey50 = _fileManager.SaveBitMapToImage(grey50, HelperConstants.TransformImageResultPath, fileName + "_grey50");
             img.SourceGrey80 = _fileManager.SaveBitMapToImage(grey80, HelperConstants.TransformImageResultPath, fileName + "_grey80");
@@ -76,7 +86,7 @@ namespace SobelAlgImage.Services
             Task.WaitAll(tasks.ToArray());
 
             // есть склейка между картинками. imgProcessSlower - возвращает картинку с какими - то белыми краями по X
-            Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(resultedListOfBitmaps);
+            Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(resultedListOfBitmaps, algorithmChooser);
 
             //_fileManager.BitmapSaveTest(resultBitmap);
 

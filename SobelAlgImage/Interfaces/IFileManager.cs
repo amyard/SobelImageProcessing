@@ -11,7 +11,7 @@ namespace SobelAlgImage.Interfaces
         string SaveBitMapToImage(Bitmap bitMap, string imageBasePath, string filename);
         bool RemoveImage(string filePath);
         string ImageFullPath(string imgPath);
-        Bitmap MergeBitmapsInOne(IEnumerable<Bitmap> images);
+        Bitmap MergeBitmapsInOne(IEnumerable<Bitmap> images, int algorithmChooser);
         void BitmapSaveTest(Bitmap bitmap);
         IEnumerable<Bitmap> SplitBitmapsOnManyBitmaps(Bitmap bitmap, int tiles);
     }

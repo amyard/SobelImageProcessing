@@ -113,7 +113,7 @@ namespace SobelAlgImage.Helpers
             sourceImage.UnlockBits(srcData);
             resultImage.UnlockBits(resultData);
 
-            return resultImage;
+            return RemoveWhiteBorderFromImage(resultImage);
         }
 
 
@@ -268,6 +268,98 @@ namespace SobelAlgImage.Helpers
                     { -1, -2, -1 }
                 };
             }
+        }
+
+        public static Bitmap RemoveWhiteBorderFromImage(Bitmap bitmap)
+        {
+            int leftSHift = 0;
+            int topShift = 0;
+            int rightShift = 0;
+            int bottomShift = 0;
+
+            // left Shift
+            for (int widthX = 0; widthX < bitmap.Width; widthX++)
+            {
+                for (int heightY = 0; heightY < bitmap.Height; heightY++)
+                {
+                    Color c = bitmap.GetPixel(widthX, heightY);
+                    if (!c.Name.Equals("0"))
+                    {
+                        leftSHift = widthX;
+                        break;
+                    }
+
+                }
+                if (!leftSHift.Equals(0))
+                    break;
+            }
+
+            // Top Shift
+            for (int widthX = 0; widthX < bitmap.Height; widthX++)
+            {
+                for (int heightY = 0; heightY < bitmap.Width - 1; heightY++)
+                {
+                    Color c = bitmap.GetPixel(heightY, widthX);
+                    if (!c.Name.Equals("0"))
+                    {
+                        topShift = widthX;
+                        break;
+                    }
+                }
+                if (!topShift.Equals(0))
+                    break;
+            }
+
+            // Right Shift
+            for (int heightX = bitmap.Width - 1; heightX >= 0; heightX--)
+            {
+                for (int widthY = 0; widthY < bitmap.Height; widthY++)
+                {
+                    Color c = bitmap.GetPixel(heightX, widthY);
+                    if (!c.Name.Equals("0"))
+                    {
+                        rightShift = heightX;
+                        break;
+                    }
+                }
+                if (!rightShift.Equals(0))
+                    break;
+            }
+
+            //Bottom Shift.
+            for (int heightX = bitmap.Height - 1; heightX >= 0; heightX--)
+            {
+                for (int widthY = 0; widthY < bitmap.Width - 1; widthY++)
+                {
+                    Color c = bitmap.GetPixel(widthY, heightX);
+                    if (!c.Name.Equals("0"))
+                    {
+                        bottomShift = heightX;
+                        break;
+                    }
+                }
+                if (!bottomShift.Equals(0))
+                    break;
+            }
+
+            Rectangle cropRect = new Rectangle
+                (
+                leftSHift + 1,
+                topShift,
+                bitmap.Width - (leftSHift + (bitmap.Width - rightShift)),
+                bitmap.Height - (topShift + (bitmap.Height - bottomShift))
+                );
+
+            Bitmap src = bitmap;
+            Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+
+            using (Graphics g = Graphics.FromImage(target))
+            {
+                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
+
+            }
+
+            return target;
         }
 
         #endregion
