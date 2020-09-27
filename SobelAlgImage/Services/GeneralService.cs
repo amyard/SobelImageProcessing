@@ -37,24 +37,28 @@ namespace SobelAlgImage.Services
             string fullPath = _fileManager.ImageFullPath(img.SourceOriginal);
             Bitmap imageSource = (Bitmap)Image.FromFile(fullPath);
 
-            Bitmap imgProcessSlower = SobelAlgorithm.SobelProcessStart(imageSource, 1);
-            Bitmap imgProcessFaster = SobelAlgorithm.SobelProcessStart(imageSource, 2);
+            Bitmap grey50 = ConvertImageWithTasks(imageSource, tiles, 1, 50);
+            Bitmap grey80 = ConvertImageWithTasks(imageSource, tiles, 1, 80);
+            Bitmap grey100 = ConvertImageWithTasks(imageSource, tiles, 1, 100);
+            Bitmap convolutionTasks = ConvertImageWithTasks(imageSource, tiles, 2, 0);
+            //Bitmap convolutionWithOutTasks = SobelAlgorithm.SobelProcessStart(imageSource, 2, 0);
 
-            Bitmap convertedBitmapSlower = ConvertImageWithTasks(imageSource, tiles, 1);
-            Bitmap convertedBitmapFaster = ConvertImageWithTasks(imgProcessFaster, tiles, 2);
-
-            img.SourceTransformSlower = _fileManager.SaveBitMapToImage(imgProcessSlower, HelperConstants.TransformImageResultPath, fileName + "_slower");
-            img.SourceTransformFaster = _fileManager.SaveBitMapToImage(imgProcessFaster, HelperConstants.TransformImageResultPath, fileName + "_faster");
-            img.SourceTransformTaskSlower = _fileManager.SaveBitMapToImage(convertedBitmapSlower, HelperConstants.TransformImageResultPath, fileName + "_slower_tasks");
-            img.SourceTransformTaskFaster = _fileManager.SaveBitMapToImage(convertedBitmapFaster, HelperConstants.TransformImageResultPath, fileName + "_faster_tasks");
+            img.SourceGrey50 = _fileManager.SaveBitMapToImage(grey50, HelperConstants.TransformImageResultPath, fileName + "_grey50");
+            img.SourceGrey80 = _fileManager.SaveBitMapToImage(grey80, HelperConstants.TransformImageResultPath, fileName + "_grey80");
+            img.SourceGrey100 = _fileManager.SaveBitMapToImage(grey100, HelperConstants.TransformImageResultPath, fileName + "_grey100");
+            img.SourcConvolutionTasks = _fileManager.SaveBitMapToImage(convolutionTasks, HelperConstants.TransformImageResultPath, fileName + "_convTasks");
 
             await _imageAlgorithm.CreateImageAsync(img);
             await _imageAlgorithm.SaveChangesAsync();
 
-
+            grey50.Dispose();
+            grey80.Dispose();
+            grey100.Dispose();
+            convolutionTasks.Dispose();
+ 
         }
 
-        public Bitmap ConvertImageWithTasks(Bitmap sourceOriginal, int tiles, int algorithmChooser)
+        public Bitmap ConvertImageWithTasks(Bitmap sourceOriginal, int tiles, int algorithmChooser, int greyScale)
         {
             // split one bitmap by Y on many small bitmaps
             IEnumerable<Bitmap> collectedBitmaps = _fileManager.SplitBitmapsOnManyBitmaps(sourceOriginal, tiles);
@@ -64,7 +68,7 @@ namespace SobelAlgImage.Services
             List<Bitmap> resultedListOfBitmaps = new Bitmap[tiles].ToList();
 
             foreach (var i in Enumerable.Range(0, tiles))
-                tasks.Add(new Task(() => SobelAlgorithm.SobelProcessTaskChooser(collectedBitmaps.ToList()[i], algorithmChooser, i, resultedListOfBitmaps)));
+                tasks.Add(new Task(() => SobelAlgorithm.SobelProcessTaskChooser(collectedBitmaps.ToList()[i], algorithmChooser, i, resultedListOfBitmaps, greyScale)));
 
             foreach (var t in tasks)
                 t.Start();
@@ -74,7 +78,6 @@ namespace SobelAlgImage.Services
             // есть склейка между картинками. imgProcessSlower - возвращает картинку с какими - то белыми краями по X
             Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(resultedListOfBitmaps);
 
-            // faster отличается с тасками от нормального
             //_fileManager.BitmapSaveTest(resultBitmap);
 
             return resultBitmap;
@@ -85,17 +88,14 @@ namespace SobelAlgImage.Services
             var img = await _imageAlgorithm.GetImageByIdAsync(id);
 
             if (img == null)
-            {
                 return new JsonMessageModel { Success = false, Message = "Error while deleting" };
-            }
 
             // delete images
             _fileManager.RemoveImage(img.SourceOriginal);
-            _fileManager.RemoveImage(img.SourceTransformSlower);
-            _fileManager.RemoveImage(img.SourceTransformFaster);
-            _fileManager.RemoveImage(img.SourceTransformTaskSlower);
-            _fileManager.RemoveImage(img.SourceTransformTaskFaster);
-
+            _fileManager.RemoveImage(img.SourceGrey50);
+            _fileManager.RemoveImage(img.SourceGrey80);
+            _fileManager.RemoveImage(img.SourceGrey100);
+            _fileManager.RemoveImage(img.SourcConvolutionTasks);
 
             await _imageAlgorithm.DeleteImageAsync(id);
             await _imageAlgorithm.SaveChangesAsync();

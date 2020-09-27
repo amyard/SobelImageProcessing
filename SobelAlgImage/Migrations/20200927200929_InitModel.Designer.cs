@@ -9,7 +9,7 @@ using SobelAlgImage.Data;
 namespace SobelAlgImage.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20200927191552_InitModel")]
+    [Migration("20200927200929_InitModel")]
     partial class InitModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,19 +27,19 @@ namespace SobelAlgImage.Migrations
                     b.Property<int?>("AmountOfThreads")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("SourcConvolutionTasks")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SourceGrey100")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SourceGrey50")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SourceGrey80")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("SourceOriginal")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SourceTransformFaster")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SourceTransformSlower")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SourceTransformTaskFaster")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SourceTransformTaskSlower")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

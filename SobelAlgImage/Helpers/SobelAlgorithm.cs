@@ -10,20 +10,20 @@ namespace SobelAlgImage.Helpers
     {
         private static Bitmap bmp;
 
-        public static void SobelProcessTaskChooser(Bitmap imageSource, int algorithmChooser, int positionInList, List<Bitmap> resultedListOfBitmaps)
+        public static void SobelProcessTaskChooser(Bitmap imageSource, int algorithmChooser, int positionInList, List<Bitmap> resultedListOfBitmaps, int greyScale)
         {
-            Bitmap bmp = algorithmChooser == 1 ? SobelFilter(imageSource) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
+            Bitmap bmp = algorithmChooser == 1 ? SobelFilter(imageSource, greyScale) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
             resultedListOfBitmaps[positionInList] = bmp;
         }
 
-        public static Bitmap SobelProcessStart(Bitmap imageSource, int algorithmChooser)
+        public static Bitmap SobelProcessStart(Bitmap imageSource, int algorithmChooser, int greyScale)
         {
-            bmp = algorithmChooser == 1 ? SobelFilter(imageSource) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
+            bmp = algorithmChooser == 1 ? SobelFilter(imageSource, greyScale) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
 
             return bmp;
         }
 
-        private static Bitmap SobelFilter(Bitmap sourceImage)
+        private static Bitmap SobelFilter(Bitmap sourceImage, int greyScale)
         {
             int b, g, r, r_x, g_x, b_x, r_y, g_y, b_y, grayscale, location, location2;
 
@@ -94,7 +94,7 @@ namespace SobelAlgImage.Helpers
                     grayscale = (b + g + r) / 3;
 
                     //thresholding to clean up the background
-                    if (grayscale < 50) grayscale = 0;
+                    if (grayscale < greyScale) grayscale = 0;
 
                     resultBuffer[location] = (byte)grayscale;
                     resultBuffer[location + 1] = (byte)grayscale;

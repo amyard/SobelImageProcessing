@@ -10,6 +10,6 @@ namespace SobelAlgImage.Services
         Task CreateImage(ImageModel img, IFormFileCollection files);
         Task<JsonMessageModel> DeleteImage(int id);
 
-        Bitmap ConvertImageWithTasks(Bitmap sourceOriginal, int tiles, int algorithmChooser);
+        Bitmap ConvertImageWithTasks(Bitmap sourceOriginal, int tiles, int algorithmChooser, int greyScale);
     }
 }

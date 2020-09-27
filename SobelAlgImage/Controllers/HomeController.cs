@@ -37,10 +37,10 @@ namespace SobelAlgImage.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateImage(ImageModel img)
+        public async Task<IActionResult> CreateImage(ImageModelVM img)
         {
             var files = HttpContext.Request.Form.Files;
-            await _service.CreateImage(img, files);
+            await _service.CreateImage(img.ImgModel, files);
 
             return RedirectToAction(nameof(Index));
         }

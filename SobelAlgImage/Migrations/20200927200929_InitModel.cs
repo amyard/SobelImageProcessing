@@ -14,10 +14,10 @@ namespace SobelAlgImage.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(nullable: true),
                     SourceOriginal = table.Column<string>(nullable: true),
-                    SourceTransformSlower = table.Column<string>(nullable: true),
-                    SourceTransformFaster = table.Column<string>(nullable: true),
-                    SourceTransformTaskSlower = table.Column<string>(nullable: true),
-                    SourceTransformTaskFaster = table.Column<string>(nullable: true),
+                    SourceGrey50 = table.Column<string>(nullable: true),
+                    SourceGrey80 = table.Column<string>(nullable: true),
+                    SourceGrey100 = table.Column<string>(nullable: true),
+                    SourcConvolutionTasks = table.Column<string>(nullable: true),
                     AmountOfThreads = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
