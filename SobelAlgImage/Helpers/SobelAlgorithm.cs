@@ -16,10 +16,8 @@ namespace SobelAlgImage.Helpers
             resultedListOfBitmaps[positionInList] = bmp;
         }
 
-        public static Bitmap SobelProcessStart(string imgPath, int algorithmChooser)
+        public static Bitmap SobelProcessStart(Bitmap imageSource, int algorithmChooser)
         {
-            Bitmap imageSource = (Bitmap)Image.FromFile(imgPath);
-
             bmp = algorithmChooser == 1 ? SobelFilter(imageSource) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
 
             return bmp;

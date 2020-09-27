@@ -17,6 +17,8 @@
                 <input type="hidden" asp-for="ImgModel.Id" />
                 <input type="hidden" asp-for="ImgModel.SourceTransformSlower" />
                 <input type="hidden" asp-for="ImgModel.SourceTransformFaster" />
+                <input type="hidden" asp-for="ImgModel.SourceTransformTaskSlower" />
+                <input type="hidden" asp-for="ImgModel.SourceTransformTaskFaster" />
                 <input type="hidden" asp-for="ImgModel.Title" />
 
                 <div class="form-row">
@@ -54,16 +56,22 @@
     <div class="result-data">
         <div class="result-data-item py-2">
             <div class="pr-3">
-                <h5>Original</h5>
+                <h6>Original</h6>
             </div>
             <div class="pr-3">
-                <h5>SobelFilter: GreyScale=50 <span class="font-weight-bold">(slower)</span></h5>
+                <h6>SobelFilter: GreyScale=50 <span class="font-weight-bold">(slower)</span></h6>
             </div>
             <div class="pr-3">
-                <h5>ConvolutionFilter <span class="font-weight-bold">(faster)</span></h5>
+                <h6>ConvolutionFilter <span class="font-weight-bold">(faster)</span></h6>
+            </div>
+            <div class="pr-3">
+                <h6>SobelFilter: GreyScale=50 <span class="font-weight-bold">(with tasks: slower)</span></h6>
+            </div>
+            <div class="pr-3">
+                <h6>ConvolutionFilter Tasks <span class="font-weight-bold">(with tasks: faster)</span></h6>
             </div>
             <div>
-                <h5 class="text-center">Action</h5>
+                <h6 class="text-center">Action</h6>
             </div>
         </div>
     </div>
@@ -71,27 +79,37 @@
     <div class="result-data">
         @foreach (var item in Model.ImgModels)
         {
-            <div class="result-data-item py-2" id="result-item_@item.Id">
-                <div class="pr-3">
-                    <a href="@item.SourceOriginal" target="_blank">
-                        <img src="@item.SourceOriginal" class="img-fluid img-thumbnail">
-                    </a>
-                </div>
-                <div class="pr-3">
-                    <a href="@item.SourceTransformSlower" target="_blank">
-                        <img src="@item.SourceTransformSlower" class="img-fluid img-thumbnail">
-                    </a>
-                </div>
-                <div class="pr-3">
-                    <a href="@item.SourceTransformFaster" target="_blank">
-                        <img src="@item.SourceTransformFaster" class="img-fluid img-thumbnail">
-                    </a>
-                </div>
-                <div class="">
-                    <button class="btn btn-danger btn-block" onclick='deleteAction("Home", "@item.Id")'>Delete Image</button>
-                </div>
-
+        <div class="result-data-item py-2" id="result-item_@item.Id">
+            <div class="pr-3">
+                <a href="@item.SourceOriginal" target="_blank">
+                    <img src="@item.SourceOriginal" class="img-fluid img-thumbnail">
+                </a>
             </div>
+            <div class="pr-3">
+                <a href="@item.SourceTransformSlower" target="_blank">
+                    <img src="@item.SourceTransformSlower" class="img-fluid img-thumbnail">
+                </a>
+            </div>
+            <div class="pr-3">
+                <a href="@item.SourceTransformFaster" target="_blank">
+                    <img src="@item.SourceTransformFaster" class="img-fluid img-thumbnail">
+                </a>
+            </div>
+            <div class="pr-3">
+                <a href="@item.SourceTransformTaskSlower" target="_blank">
+                    <img src="@item.SourceTransformTaskSlower" class="img-fluid img-thumbnail">
+                </a>
+            </div>
+            <div class="pr-3">
+                <a href="@item.SourceTransformTaskFaster" target="_blank">
+                    <img src="@item.SourceTransformTaskFaster" class="img-fluid img-thumbnail">
+                </a>
+            </div>
+            <div class="">
+                <button class="btn btn-danger btn-block" onclick='deleteAction("Home", "@item.Id")'>Delete Image</button>
+            </div>
+
+        </div>
         }
     </div>
 </div>

@@ -84,7 +84,7 @@ body {
 
 .result-data-item {
     display: grid;
-    grid-template-columns: 30% 30% 30% 10%;
+    grid-template-columns: 18% 18% 18% 18% 18% 10%;
     border-bottom: 2px solid #eee;
 }
 

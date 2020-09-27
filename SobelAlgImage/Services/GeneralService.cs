@@ -21,6 +21,7 @@ namespace SobelAlgImage.Services
             _fileManager = fileManager;
         }
 
+
         public async Task CreateImage(ImageModel img, IFormFileCollection files)
         {
             // generate new file name
@@ -33,25 +34,37 @@ namespace SobelAlgImage.Services
             img.AmountOfThreads = img.AmountOfThreads ?? HelperConstants.AmountOfProcesses;
             img.SourceOriginal = await _fileManager.SaveImage(files, HelperConstants.OriginalImageBasePath, HelperConstants.OriginalImageResultPath, fileName);
 
-            Bitmap imgProcessSlower = SobelAlgorithm.SobelProcessStart(_fileManager.ImageFullPath(img.SourceOriginal), 1);
-            Bitmap imgProcessFaster = SobelAlgorithm.SobelProcessStart(_fileManager.ImageFullPath(img.SourceOriginal), 2);
+            string fullPath = _fileManager.ImageFullPath(img.SourceOriginal);
+            Bitmap imageSource = (Bitmap)Image.FromFile(fullPath);
+
+            Bitmap imgProcessSlower = SobelAlgorithm.SobelProcessStart(imageSource, 1);
+            Bitmap imgProcessFaster = SobelAlgorithm.SobelProcessStart(imageSource, 2);
+
+            Bitmap convertedBitmapSlower = ConvertImageWithTasks(imageSource, tiles, 1);
+            Bitmap convertedBitmapFaster = ConvertImageWithTasks(imgProcessFaster, tiles, 2);
 
             img.SourceTransformSlower = _fileManager.SaveBitMapToImage(imgProcessSlower, HelperConstants.TransformImageResultPath, fileName + "_slower");
             img.SourceTransformFaster = _fileManager.SaveBitMapToImage(imgProcessFaster, HelperConstants.TransformImageResultPath, fileName + "_faster");
-
+            img.SourceTransformTaskSlower = _fileManager.SaveBitMapToImage(convertedBitmapSlower, HelperConstants.TransformImageResultPath, fileName + "_slower_tasks");
+            img.SourceTransformTaskFaster = _fileManager.SaveBitMapToImage(convertedBitmapFaster, HelperConstants.TransformImageResultPath, fileName + "_faster_tasks");
 
             await _imageAlgorithm.CreateImageAsync(img);
             await _imageAlgorithm.SaveChangesAsync();
 
+
+        }
+
+        public Bitmap ConvertImageWithTasks(Bitmap sourceOriginal, int tiles, int algorithmChooser)
+        {
             // split one bitmap by Y on many small bitmaps
-            IEnumerable<Bitmap> collectedBitmaps = _fileManager.SplitBitmapsOnManyBitmaps(imgProcessFaster, tiles);
+            IEnumerable<Bitmap> collectedBitmaps = _fileManager.SplitBitmapsOnManyBitmaps(sourceOriginal, tiles);
 
             // create our tasks
             var tasks = new List<Task>();
             List<Bitmap> resultedListOfBitmaps = new Bitmap[tiles].ToList();
 
             foreach (var i in Enumerable.Range(0, tiles))
-                tasks.Add(new Task(() => SobelAlgorithm.SobelProcessTaskChooser(collectedBitmaps.ToList()[i], 2, i, resultedListOfBitmaps)));
+                tasks.Add(new Task(() => SobelAlgorithm.SobelProcessTaskChooser(collectedBitmaps.ToList()[i], algorithmChooser, i, resultedListOfBitmaps)));
 
             foreach (var t in tasks)
                 t.Start();
@@ -59,8 +72,12 @@ namespace SobelAlgImage.Services
             Task.WaitAll(tasks.ToArray());
 
             // есть склейка между картинками. imgProcessSlower - возвращает картинку с какими - то белыми краями по X
-            Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(collectedBitmaps);
-            _fileManager.BitmapSaveTest(resultBitmap);
+            Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(resultedListOfBitmaps);
+
+            // faster отличается с тасками от нормального
+            //_fileManager.BitmapSaveTest(resultBitmap);
+
+            return resultBitmap;
         }
 
         public async Task<JsonMessageModel> DeleteImage(int id)
@@ -76,6 +93,8 @@ namespace SobelAlgImage.Services
             _fileManager.RemoveImage(img.SourceOriginal);
             _fileManager.RemoveImage(img.SourceTransformSlower);
             _fileManager.RemoveImage(img.SourceTransformFaster);
+            _fileManager.RemoveImage(img.SourceTransformTaskSlower);
+            _fileManager.RemoveImage(img.SourceTransformTaskFaster);
 
 
             await _imageAlgorithm.DeleteImageAsync(id);
