@@ -27,12 +27,11 @@ namespace SobelAlgImage.Services
         {
             // generate new file name
             string fileName = Guid.NewGuid().ToString();
-            int tiles = img.AmountOfThreads ?? 4;
+            int tiles = img.AmountOfThreads ?? HelperConstants.AmountOfProcesses;
 
             img.AmountOfThreads = tiles;
 
             img.Title = fileName;
-            img.AmountOfThreads = img.AmountOfThreads ?? HelperConstants.AmountOfProcesses;
             img.SourceOriginal = await _fileManager.SaveImage(files, HelperConstants.OriginalImageBasePath, HelperConstants.OriginalImageResultPath, fileName);
 
             string fullPath = _fileManager.ImageFullPath(img.SourceOriginal);

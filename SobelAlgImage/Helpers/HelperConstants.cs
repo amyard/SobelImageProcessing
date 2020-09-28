@@ -6,6 +6,6 @@
         public const string OriginalImageResultPath = @"\images\original\";
         public const string TransformImageBasePath = @"images/transform";
         public const string TransformImageResultPath = @"\images\transform\";
-        public const int AmountOfProcesses = 3;
+        public const int AmountOfProcesses = 4;
     }
 }
