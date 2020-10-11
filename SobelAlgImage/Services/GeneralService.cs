@@ -14,7 +14,6 @@ namespace SobelAlgImage.Services
     {
         private readonly IFileManager _fileManager;
         private readonly IImageAlgorithmRepo _imageAlgorithm;
-        Bitmap grey50, grey80, grey100, convolutionTasks;
 
         public GeneralService(IFileManager fileManager, IImageAlgorithmRepo imageAlgorithm)
         {
@@ -25,6 +24,8 @@ namespace SobelAlgImage.Services
 
         public async Task CreateImage(ImageModel img, IFormFileCollection files)
         {
+            Bitmap grey50, grey80, grey100, convolutionTasks;
+
             // generate new file name
             string fileName = Guid.NewGuid().ToString();
             int tiles = img.AmountOfThreads ?? HelperConstants.AmountOfProcesses;
@@ -84,7 +85,6 @@ namespace SobelAlgImage.Services
 
             Task.WaitAll(tasks.ToArray());
 
-            // есть склейка между картинками. imgProcessSlower - возвращает картинку с какими - то белыми краями по X
             Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(resultedListOfBitmaps, algorithmChooser);
 
             //_fileManager.BitmapSaveTest(resultBitmap);

@@ -10,16 +10,21 @@ namespace SobelAlgImage.Helpers
     {
         private static Bitmap bmp;
 
+
+        public static Bitmap ChooseCorrectAlgorithn(Bitmap imageSource, int algorithmChooser, int greyScale)
+        {
+            return algorithmChooser == 1 ? SobelFilter(imageSource, greyScale) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
+        }
+
         public static void SobelProcessTaskChooser(Bitmap imageSource, int algorithmChooser, int positionInList, List<Bitmap> resultedListOfBitmaps, int greyScale)
         {
-            Bitmap bmp = algorithmChooser == 1 ? SobelFilter(imageSource, greyScale) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
+            bmp = ChooseCorrectAlgorithn(imageSource, algorithmChooser, greyScale);
             resultedListOfBitmaps[positionInList] = bmp;
         }
 
         public static Bitmap SobelProcessStart(Bitmap imageSource, int algorithmChooser, int greyScale)
         {
-            bmp = algorithmChooser == 1 ? SobelFilter(imageSource, greyScale) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
-
+            bmp = ChooseCorrectAlgorithn(imageSource, algorithmChooser, greyScale);
             return bmp;
         }
 
@@ -103,10 +108,6 @@ namespace SobelAlgImage.Helpers
                     //if (b < 100) b = 0;
                     //if (g < 100) g = 0;
                     //if (r < 100) r = 0;
-
-                    //resultBuffer[location] = (byte)b;
-                    //resultBuffer[location + 1] = (byte)g;
-                    //resultBuffer[location + 2] = (byte)r;
                 }
             }
             Marshal.Copy(resultBuffer, 0, pointer2, pixelBuffer.Length);
