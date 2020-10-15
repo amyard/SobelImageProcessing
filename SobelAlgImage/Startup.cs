@@ -51,7 +51,7 @@ namespace SobelAlgImage
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=ImageProcess}/{action=Index}/{id?}");
             });
         }
     }

@@ -9,14 +9,14 @@ using SobelAlgImage.Models.ViewModels;
 
 namespace SobelAlgImage.Controllers
 {
-    public class HomeController : Controller
+    public class ImageProcessController : Controller
     {
         #region constructor
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<ImageProcessController> _logger;
         private readonly IGeneralService _service;
         private readonly IImageAlgorithmRepo _imageRepo;
 
-        public HomeController(ILogger<HomeController> logger, IGeneralService service, IImageAlgorithmRepo imageRepo)
+        public ImageProcessController(ILogger<ImageProcessController> logger, IGeneralService service, IImageAlgorithmRepo imageRepo)
         {
             _logger = logger;
             _service = service;
