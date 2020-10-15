@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SobelAlgImage.Models;
+using SobelAlgImage.Models.DataModels;
 
-namespace SobelAlgImage.Data
+namespace SobelAlgImage.Infrastructure.Data
 {
     public class StoreContext : DbContext
     {

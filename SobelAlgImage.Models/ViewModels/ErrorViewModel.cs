@@ -1,6 +1,4 @@
-using System;
-
-namespace SobelAlgImage.Models
+namespace SobelAlgImage.Models.ViewModels
 {
     public class ErrorViewModel
     {

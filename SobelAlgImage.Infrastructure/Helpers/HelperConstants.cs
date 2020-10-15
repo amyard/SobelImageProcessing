@@ -1,4 +1,4 @@
-﻿namespace SobelAlgImage.Helpers
+﻿namespace SobelAlgImage.Infrastructure.Helpers
 {
     public class HelperConstants
     {

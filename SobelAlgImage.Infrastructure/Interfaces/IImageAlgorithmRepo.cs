@@ -1,8 +1,8 @@
-﻿using SobelAlgImage.Models;
+﻿using SobelAlgImage.Models.DataModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SobelAlgImage.Interfaces
+namespace SobelAlgImage.Infrastructure.Interfaces
 {
     public interface IImageAlgorithmRepo
     {
@@ -10,7 +10,6 @@ namespace SobelAlgImage.Interfaces
         Task CreateImageAsync(ImageModel img);
         Task<IReadOnlyList<ImageModel>> GetListOfImagesAsync();
         Task DeleteImageAsync(int id);
-
         Task<bool> SaveChangesAsync();
     }
 }

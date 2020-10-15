@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace SobelAlgImage.Helpers
+namespace SobelAlgImage.Infrastructure.Helpers
 {
     public class SobelAlgorithm
     {

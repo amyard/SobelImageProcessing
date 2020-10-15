@@ -1,4 +1,4 @@
-﻿namespace SobelAlgImage.Models
+﻿namespace SobelAlgImage.Models.DataModels
 {
     public class ImageModel
     {

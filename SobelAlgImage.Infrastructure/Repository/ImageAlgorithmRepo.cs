@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SobelAlgImage.Data;
-using SobelAlgImage.Interfaces;
-using SobelAlgImage.Models;
+using SobelAlgImage.Infrastructure.Data;
+using SobelAlgImage.Infrastructure.Interfaces;
+using SobelAlgImage.Models.DataModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SobelAlgImage.Repository
+namespace SobelAlgImage.Infrastructure.Repository
 {
     public class ImageAlgorithmRepo : IImageAlgorithmRepo
     {

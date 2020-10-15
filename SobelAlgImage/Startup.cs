@@ -21,10 +21,8 @@ namespace SobelAlgImage
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IImageAlgorithmRepo, ImageAlgorithmRepo>();
-            services.AddTransient<IFileManager, FileManager>();
-            services.AddTransient<IGeneralService, GeneralService>();
-
+            // load our repo, services and interfaces
+            services.AddApplicationServices();
 
             // usign sqlite. db will created in root folder. 
             services.AddDbContext<StoreContext>(x => x.UseSqlite(_config.GetConnectionString("DefaultConnection")));

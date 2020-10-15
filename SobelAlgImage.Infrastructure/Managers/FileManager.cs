@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using SobelAlgImage.Interfaces;
-using System;
+﻿using Microsoft.AspNetCore.Http;
+using SobelAlgImage.Infrastructure.Interfaces;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SobelAlgImage.Repository
+namespace SobelAlgImage.Infrastructure.Managers
 {
     public class FileManager : IFileManager
     {
@@ -65,7 +63,7 @@ namespace SobelAlgImage.Repository
             return rootPathToImage;
         }
 
-        public async Task<string> SaveImage(IFormFileCollection files, string imageBasePath, string imageResultPath, string fileName)
+        public async Task<string> SaveImageAsync(IFormFileCollection files, string imageBasePath, string imageResultPath, string fileName)
         {
             string webRootPath = _hostEnvironment.WebRootPath;                  // get path to image folder
             var uploads = Path.Combine(webRootPath, imageBasePath);             // full path to save image

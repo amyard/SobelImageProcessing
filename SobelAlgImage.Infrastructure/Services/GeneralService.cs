@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
-using SobelAlgImage.Helpers;
-using SobelAlgImage.Interfaces;
-using SobelAlgImage.Models;
+using SobelAlgImage.Infrastructure.Helpers;
+using SobelAlgImage.Infrastructure.Interfaces;
+using SobelAlgImage.Models.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SobelAlgImage.Services
+namespace SobelAlgImage.Infrastructure.Services
 {
     public class GeneralService : IGeneralService
     {
@@ -22,7 +22,7 @@ namespace SobelAlgImage.Services
         }
 
 
-        public async Task CreateImage(ImageModel img, IFormFileCollection files)
+        public async Task CreateImageAsync(ImageModel img, IFormFileCollection files)
         {
             Bitmap grey50, grey80, grey100, convolutionTasks;
 
@@ -33,7 +33,7 @@ namespace SobelAlgImage.Services
             img.AmountOfThreads = tiles;
 
             img.Title = fileName;
-            img.SourceOriginal = await _fileManager.SaveImage(files, HelperConstants.OriginalImageBasePath, HelperConstants.OriginalImageResultPath, fileName);
+            img.SourceOriginal = await _fileManager.SaveImageAsync(files, HelperConstants.OriginalImageBasePath, HelperConstants.OriginalImageResultPath, fileName);
 
             string fullPath = _fileManager.ImageFullPath(img.SourceOriginal);
             Bitmap imageSource = (Bitmap)Image.FromFile(fullPath);
@@ -92,7 +92,7 @@ namespace SobelAlgImage.Services
             return resultBitmap;
         }
 
-        public async Task<JsonMessageModel> DeleteImage(int id)
+        public async Task<JsonMessageModel> DeleteImageAsync(int id)
         {
             var img = await _imageAlgorithm.GetImageByIdAsync(id);
 
