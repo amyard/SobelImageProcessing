@@ -6,6 +6,8 @@ using SobelAlgImage.Infrastructure.Data;
 using SobelAlgImage.Infrastructure.Helpers;
 using System;
 using System.IO;
+using NLog.Web;
+
 
 namespace SobelAlgImage
 {
@@ -53,6 +55,12 @@ namespace SobelAlgImage
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                })
+                .UseNLog();
     }
 }

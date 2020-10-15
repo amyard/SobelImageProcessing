@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using SobelAlgImage.Infrastructure.Helpers;
 using SobelAlgImage.Infrastructure.Interfaces;
 using SobelAlgImage.Models.DataModels;
@@ -12,11 +13,13 @@ namespace SobelAlgImage.Infrastructure.Services
 {
     public class GeneralService : IGeneralService
     {
+        private readonly ILogger<GeneralService> _logger;
         private readonly IFileManager _fileManager;
         private readonly IImageAlgorithmRepo _imageAlgorithm;
 
-        public GeneralService(IFileManager fileManager, IImageAlgorithmRepo imageAlgorithm)
+        public GeneralService(ILogger<GeneralService> logger, IFileManager fileManager, IImageAlgorithmRepo imageAlgorithm)
         {
+            _logger = logger;
             _imageAlgorithm = imageAlgorithm;
             _fileManager = fileManager;
         }
@@ -94,20 +97,28 @@ namespace SobelAlgImage.Infrastructure.Services
 
         public async Task<JsonMessageModel> DeleteImageAsync(int id)
         {
-            var img = await _imageAlgorithm.GetImageByIdAsync(id);
+            try { 
+                var img = await _imageAlgorithm.GetImageByIdAsync(id);
 
-            if (img == null)
-                return new JsonMessageModel { Success = false, Message = "Error while deleting" };
+                if (img == null)
+                    return new JsonMessageModel { Success = false, Message = "Error while deleting" };
 
-            // delete images
-            _fileManager.RemoveImage(img.SourceOriginal);
-            _fileManager.RemoveImage(img.SourceGrey50);
-            _fileManager.RemoveImage(img.SourceGrey80);
-            _fileManager.RemoveImage(img.SourceGrey100);
-            _fileManager.RemoveImage(img.SourcConvolutionTasks);
+                // delete images
+                _fileManager.RemoveImage(img.SourceOriginal);
+                _fileManager.RemoveImage(img.SourceGrey50);
+                _fileManager.RemoveImage(img.SourceGrey80);
+                _fileManager.RemoveImage(img.SourceGrey100);
+                _fileManager.RemoveImage(img.SourcConvolutionTasks);
 
-            await _imageAlgorithm.DeleteImageAsync(id);
-            await _imageAlgorithm.SaveChangesAsync();
+                await _imageAlgorithm.DeleteImageAsync(id);
+                await _imageAlgorithm.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message, "Stopped deleting. Some error.");
+
+                return new JsonMessageModel { Success = false, Message = "Error while deleting. Check loggs." };
+            }
 
             return new JsonMessageModel { Success = true, Message = "Delete Successful" };
         }
