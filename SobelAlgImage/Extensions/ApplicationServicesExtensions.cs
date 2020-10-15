@@ -1,4 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SobelAlgImage.Infrastructure.Interfaces;
+using SobelAlgImage.Infrastructure.Managers;
+using SobelAlgImage.Infrastructure.Repository;
+using SobelAlgImage.Infrastructure.Services;
 
 namespace SobelAlgImage.Extensions
 {

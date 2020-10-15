@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SobelAlgImage.Interfaces;
-using SobelAlgImage.Models;
-using SobelAlgImage.Services;
+using SobelAlgImage.Infrastructure.Interfaces;
+using SobelAlgImage.Models.DataModels;
+using SobelAlgImage.Models.ViewModels;
 
 namespace SobelAlgImage.Controllers
 {
@@ -27,7 +27,7 @@ namespace SobelAlgImage.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ImageModelVM vm = new ImageModelVM()
+            ImageViewModel vm = new ImageViewModel()
             {
                 ImgModel = new ImageModel(),
                 ImgModels = await _imageRepo.GetListOfImagesAsync()
@@ -37,10 +37,10 @@ namespace SobelAlgImage.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateImage(ImageModelVM img)
+        public async Task<IActionResult> CreateImage(ImageViewModel img)
         {
             var files = HttpContext.Request.Form.Files;
-            await _service.CreateImage(img.ImgModel, files);
+            await _service.CreateImageAsync(img.ImgModel, files);
 
             return RedirectToAction(nameof(Index));
         }
@@ -49,7 +49,7 @@ namespace SobelAlgImage.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteImage(int id)
         {
-            return Json(await _service.DeleteImage(id));
+            return Json(await _service.DeleteImageAsync(id));
         }
 
 

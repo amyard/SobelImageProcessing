@@ -4,10 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SobelAlgImage.Data;
-using SobelAlgImage.Interfaces;
-using SobelAlgImage.Repository;
-using SobelAlgImage.Services;
+using SobelAlgImage.Extensions;
+using SobelAlgImage.Infrastructure.Data;
 
 namespace SobelAlgImage
 {

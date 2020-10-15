@@ -2,11 +2,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SobelAlgImage.Data;
-using SobelAlgImage.Helpers;
+using SobelAlgImage.Infrastructure.Data;
+using SobelAlgImage.Infrastructure.Helpers;
 using System;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace SobelAlgImage
 {

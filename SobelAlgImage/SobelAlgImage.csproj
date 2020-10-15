@@ -20,4 +20,8 @@
     <Folder Include="wwwroot\images\transform\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SobelAlgImage.Infrastructure\SobelAlgImage.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
