@@ -31,7 +31,7 @@ namespace SobelAlgImage.Infrastructure.Services
 
             // generate new file name
             string fileName = Guid.NewGuid().ToString();
-            int tiles = img.AmountOfThreads ?? HelperConstants.AmountOfProcesses;
+            int tiles = img.GetCorrectTilesForProcessing();
 
             img.AmountOfThreads = tiles;
 
