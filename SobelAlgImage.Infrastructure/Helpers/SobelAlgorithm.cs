@@ -8,27 +8,24 @@ namespace SobelAlgImage.Infrastructure.Helpers
 {
     public class SobelAlgorithm
     {
-        private static Bitmap bmp;
-
-
-        public static Bitmap ChooseCorrectAlgorithn(Bitmap imageSource, int algorithmChooser, int greyScale)
+        public Bitmap ChooseCorrectAlgorithn(Bitmap imageSource, int algorithmChooser, int greyScale)
         {
             return algorithmChooser == 1 ? SobelFilter(imageSource, greyScale) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
         }
 
-        public static void SobelProcessTaskChooser(Bitmap imageSource, int algorithmChooser, int positionInList, List<Bitmap> resultedListOfBitmaps, int greyScale)
+        public void SobelProcessTaskChooser(Bitmap imageSource, int algorithmChooser, int positionInList, List<Bitmap> resultedListOfBitmaps, int greyScale)
         {
-            bmp = ChooseCorrectAlgorithn(imageSource, algorithmChooser, greyScale);
+            Bitmap bmp = ChooseCorrectAlgorithn(imageSource, algorithmChooser, greyScale);
             resultedListOfBitmaps[positionInList] = bmp;
         }
 
-        public static Bitmap SobelProcessStart(Bitmap imageSource, int algorithmChooser, int greyScale)
+        public Bitmap SobelProcessStart(Bitmap imageSource, int algorithmChooser, int greyScale)
         {
-            bmp = ChooseCorrectAlgorithn(imageSource, algorithmChooser, greyScale);
+            Bitmap bmp = ChooseCorrectAlgorithn(imageSource, algorithmChooser, greyScale);
             return bmp;
         }
 
-        private static Bitmap SobelFilter(Bitmap sourceImage, int greyScale)
+        public Bitmap SobelFilter(Bitmap sourceImage, int greyScale)
         {
             int b, g, r, r_x, g_x, b_x, r_y, g_y, b_y, grayscale, location, location2;
 
@@ -118,7 +115,7 @@ namespace SobelAlgImage.Infrastructure.Helpers
         }
 
 
-        private static Bitmap ConvolutionFilter(Bitmap sourceImage, double[,] xkernel, double[,] ykernel, double factor = 1, int bias = 0, bool grayscale = false)
+        public Bitmap ConvolutionFilter(Bitmap sourceImage, double[,] xkernel, double[,] ykernel, double factor = 1, int bias = 0, bool grayscale = false)
         {
             //Image dimensions stored in variables for convenience
             int width = sourceImage.Width;
@@ -244,7 +241,7 @@ namespace SobelAlgImage.Infrastructure.Helpers
 
         #region private methods
         //Sobel operator kernel for horizontal pixel changes
-        private static double[,] xSobel
+        private double[,] xSobel
         {
             get
             {
@@ -258,7 +255,7 @@ namespace SobelAlgImage.Infrastructure.Helpers
         }
 
         //Sobel operator kernel for vertical pixel changes
-        private static double[,] ySobel
+        private double[,] ySobel
         {
             get
             {
@@ -271,7 +268,7 @@ namespace SobelAlgImage.Infrastructure.Helpers
             }
         }
 
-        public static Bitmap RemoveWhiteBorderFromImage(Bitmap bitmap)
+        private Bitmap RemoveWhiteBorderFromImage(Bitmap bitmap)
         {
             int leftSHift = 0;
             int topShift = 0;

@@ -41,12 +41,15 @@ namespace SobelAlgImage.Infrastructure.Services
             string fullPath = _fileManager.ImageFullPath(img.SourceOriginal);
             Bitmap imageSource = (Bitmap)Image.FromFile(fullPath);
 
+
             if (tiles == 1)
             {
-                grey50 = SobelAlgorithm.SobelProcessStart(imageSource, 1, 50);
-                grey80 = SobelAlgorithm.SobelProcessStart(imageSource, 1, 80);
-                grey100 = SobelAlgorithm.SobelProcessStart(imageSource, 1, 100);
-                convolutionTasks = SobelAlgorithm.SobelProcessStart(imageSource, 2, 0);
+                SobelAlgorithm imageProcessAlg = new SobelAlgorithm();
+
+                grey50 = imageProcessAlg.SobelProcessStart(imageSource, 1, 50);
+                grey80 = imageProcessAlg.SobelProcessStart(imageSource, 1, 80);
+                grey100 = imageProcessAlg.SobelProcessStart(imageSource, 1, 100);
+                convolutionTasks = imageProcessAlg.SobelProcessStart(imageSource, 2, 0);
             }
             else
             { 
@@ -79,9 +82,11 @@ namespace SobelAlgImage.Infrastructure.Services
             // create our tasks
             var tasks = new List<Task>();
             List<Bitmap> resultedListOfBitmaps = new Bitmap[tiles].ToList();
+            SobelAlgorithm imageProcessAlg = new SobelAlgorithm();
 
             foreach (var i in Enumerable.Range(0, tiles))
-                tasks.Add(new Task(() => SobelAlgorithm.SobelProcessTaskChooser(collectedBitmaps.ToList()[i], algorithmChooser, i, resultedListOfBitmaps, greyScale)));
+                tasks.Add(new Task(() =>
+                    imageProcessAlg.SobelProcessTaskChooser(collectedBitmaps.ToList()[i], algorithmChooser, i, resultedListOfBitmaps, greyScale)));
 
             foreach (var t in tasks)
                 t.Start();

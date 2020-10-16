@@ -170,7 +170,7 @@ namespace SobelAlgImage.Infrastructure.Managers
 
 
         #region private methods
-        private static ImageCodecInfo GetEncoderInfo(string mimeType)
+        private ImageCodecInfo GetEncoderInfo(string mimeType)
         {
             int j;
             ImageCodecInfo[] encoders;
