@@ -46,13 +46,13 @@ namespace SobelAlgImage.Infrastructure.Services
             {
                 SobelAlgorithm imageProcessAlg = new SobelAlgorithm();
 
-                grey50 = imageProcessAlg.SobelProcessStart(imageSource, 1, 50);
-                grey80 = imageProcessAlg.SobelProcessStart(imageSource, 1, 80);
-                grey100 = imageProcessAlg.SobelProcessStart(imageSource, 1, 100);
-                convolutionTasks = imageProcessAlg.SobelProcessStart(imageSource, 2, 0);
+                grey50 = imageProcessAlg.SobelFilter(imageSource, 50);
+                grey80 = imageProcessAlg.SobelFilter(imageSource, 80);
+                grey100 = imageProcessAlg.SobelFilter(imageSource, 100);
+                convolutionTasks = imageProcessAlg.ConvolutionFilter(imageSource);
             }
             else
-            { 
+            {
                 grey50 = ConvertImageWithTasks(imageSource, tiles, 1, 50);
                 grey80 = ConvertImageWithTasks(imageSource, tiles, 1, 80);
                 grey100 = ConvertImageWithTasks(imageSource, tiles, 1, 100);
@@ -67,10 +67,10 @@ namespace SobelAlgImage.Infrastructure.Services
             await _imageAlgorithm.CreateImageAsync(img);
             await _imageAlgorithm.SaveChangesAsync();
 
-            grey50.Dispose();
-            grey80.Dispose();
-            grey100.Dispose();
-            convolutionTasks.Dispose();
+            //grey50.Dispose();
+            //grey80.Dispose();
+            //grey100.Dispose();
+            //convolutionTasks.Dispose();
  
         }
 
@@ -86,7 +86,9 @@ namespace SobelAlgImage.Infrastructure.Services
 
             foreach (var i in Enumerable.Range(0, tiles))
                 tasks.Add(new Task(() =>
-                    imageProcessAlg.SobelProcessTaskChooser(collectedBitmaps.ToList()[i], algorithmChooser, i, resultedListOfBitmaps, greyScale)));
+                    resultedListOfBitmaps[i] = algorithmChooser == 1
+                                                    ? imageProcessAlg.SobelFilter(collectedBitmaps.ToList()[i], greyScale)
+                                                    : imageProcessAlg.ConvolutionFilter(collectedBitmaps.ToList()[i])));
 
             foreach (var t in tasks)
                 t.Start();

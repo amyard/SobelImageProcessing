@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -8,23 +7,6 @@ namespace SobelAlgImage.Helper
 {
     public class SobelAlgorithm
     {
-        public Bitmap ChooseCorrectAlgorithn(Bitmap imageSource, int algorithmChooser, int greyScale)
-        {
-            return algorithmChooser == 1 ? SobelFilter(imageSource, greyScale) : ConvolutionFilter(imageSource, xSobel, ySobel, 1.0, 0, true);
-        }
-
-        public void SobelProcessTaskChooser(Bitmap imageSource, int algorithmChooser, int positionInList, List<Bitmap> resultedListOfBitmaps, int greyScale)
-        {
-            Bitmap bmp = ChooseCorrectAlgorithn(imageSource, algorithmChooser, greyScale);
-            resultedListOfBitmaps[positionInList] = bmp;
-        }
-
-        public Bitmap SobelProcessStart(Bitmap imageSource, int algorithmChooser, int greyScale)
-        {
-            Bitmap bmp = ChooseCorrectAlgorithn(imageSource, algorithmChooser, greyScale);
-            return bmp;
-        }
-
         public Bitmap SobelFilter(Bitmap sourceImage, int greyScale)
         {
             int b, g, r, r_x, g_x, b_x, r_y, g_y, b_y, grayscale, location, location2;
@@ -115,8 +97,14 @@ namespace SobelAlgImage.Helper
         }
 
 
-        public Bitmap ConvolutionFilter(Bitmap sourceImage, double[,] xkernel, double[,] ykernel, double factor = 1, int bias = 0, bool grayscale = false)
+        public Bitmap ConvolutionFilter(Bitmap sourceImage)
         {
+            double[,] xkernel = xSobel;
+            double[,] ykernel = ySobel;
+            //double factor = 1;
+            //int bias = 0;
+            bool grayscale = true;
+
             //Image dimensions stored in variables for convenience
             int width = sourceImage.Width;
             int height = sourceImage.Height;
