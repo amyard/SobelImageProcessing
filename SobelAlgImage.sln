@@ -5,16 +5,20 @@ VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SobelAlgImage", "SobelAlgImage\SobelAlgImage.csproj", "{7D6ECEC6-848B-40F7-A3A2-AB63FC98ED33}"
 	ProjectSection(ProjectDependencies) = postProject
+		{770F8A01-00C4-428D-A84A-32A4B7FD740C} = {770F8A01-00C4-428D-A84A-32A4B7FD740C}
 		{A0BCDF71-62A1-468A-BBCD-D753CD0EFFA7} = {A0BCDF71-62A1-468A-BBCD-D753CD0EFFA7}
 		{0DD4178F-DAE8-4E6E-B45B-299381BFDF02} = {0DD4178F-DAE8-4E6E-B45B-299381BFDF02}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SobelAlgImage.Models", "SobelAlgImage.Models\SobelAlgImage.Models.csproj", "{0DD4178F-DAE8-4E6E-B45B-299381BFDF02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SobelAlgImage.Models", "SobelAlgImage.Models\SobelAlgImage.Models.csproj", "{0DD4178F-DAE8-4E6E-B45B-299381BFDF02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SobelAlgImage.Infrastructure", "SobelAlgImage.Infrastructure\SobelAlgImage.Infrastructure.csproj", "{A0BCDF71-62A1-468A-BBCD-D753CD0EFFA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SobelAlgImage.Infrastructure", "SobelAlgImage.Infrastructure\SobelAlgImage.Infrastructure.csproj", "{A0BCDF71-62A1-468A-BBCD-D753CD0EFFA7}"
 	ProjectSection(ProjectDependencies) = postProject
+		{770F8A01-00C4-428D-A84A-32A4B7FD740C} = {770F8A01-00C4-428D-A84A-32A4B7FD740C}
 		{0DD4178F-DAE8-4E6E-B45B-299381BFDF02} = {0DD4178F-DAE8-4E6E-B45B-299381BFDF02}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SobelAlgImage.Helper", "SobelAlgImage.Helper\SobelAlgImage.Helper.csproj", "{770F8A01-00C4-428D-A84A-32A4B7FD740C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +38,10 @@ Global
 		{A0BCDF71-62A1-468A-BBCD-D753CD0EFFA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0BCDF71-62A1-468A-BBCD-D753CD0EFFA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0BCDF71-62A1-468A-BBCD-D753CD0EFFA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{770F8A01-00C4-428D-A84A-32A4B7FD740C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{770F8A01-00C4-428D-A84A-32A4B7FD740C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{770F8A01-00C4-428D-A84A-32A4B7FD740C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{770F8A01-00C4-428D-A84A-32A4B7FD740C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

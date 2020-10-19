@@ -1,6 +1,6 @@
-﻿namespace SobelAlgImage.Infrastructure.Helpers
+﻿namespace SobelAlgImage.Helper
 {
-    public class HelperConstants
+    public class ProjectConstants
     {
         public const string OriginalImageBasePath = @"images/original";
         public const string OriginalImageResultPath = @"\images\original\";

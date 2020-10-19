@@ -3,11 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SobelAlgImage.Infrastructure.Data;
-using SobelAlgImage.Infrastructure.Helpers;
 using System;
 using System.IO;
 using NLog.Web;
-
+using SobelAlgImage.Helper;
 
 namespace SobelAlgImage
 {
@@ -32,8 +31,8 @@ namespace SobelAlgImage
 
                     // generate folders
                     string webRootPath = webHost.WebRootPath;
-                    var postsPath = Path.Combine(webRootPath, HelperConstants.OriginalImageBasePath.TrimStart('\\'));
-                    var usersPath = Path.Combine(webRootPath, HelperConstants.TransformImageBasePath.TrimStart('\\'));
+                    var postsPath = Path.Combine(webRootPath, ProjectConstants.OriginalImageBasePath.TrimStart('\\'));
+                    var usersPath = Path.Combine(webRootPath, ProjectConstants.TransformImageBasePath.TrimStart('\\'));
 
                     if (!Directory.Exists(postsPath))
                         Directory.CreateDirectory(postsPath);

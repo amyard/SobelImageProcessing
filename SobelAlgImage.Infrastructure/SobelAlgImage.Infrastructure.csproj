@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SobelAlgImage.Helper\SobelAlgImage.Helper.csproj" />
     <ProjectReference Include="..\SobelAlgImage.Models\SobelAlgImage.Models.csproj" />
   </ItemGroup>
 

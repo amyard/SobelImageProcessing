@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using SobelAlgImage.Infrastructure.Helpers;
+using SobelAlgImage.Helper;
 using SobelAlgImage.Infrastructure.Interfaces;
 using SobelAlgImage.Models.DataModels;
 using System;
@@ -36,7 +36,7 @@ namespace SobelAlgImage.Infrastructure.Services
             img.AmountOfThreads = tiles;
 
             img.Title = fileName;
-            img.SourceOriginal = await _fileManager.SaveImageAsync(files, HelperConstants.OriginalImageBasePath, HelperConstants.OriginalImageResultPath, fileName);
+            img.SourceOriginal = await _fileManager.SaveImageAsync(files, ProjectConstants.OriginalImageBasePath, ProjectConstants.OriginalImageResultPath, fileName);
 
             string fullPath = _fileManager.ImageFullPath(img.SourceOriginal);
             Bitmap imageSource = (Bitmap)Image.FromFile(fullPath);
@@ -59,10 +59,10 @@ namespace SobelAlgImage.Infrastructure.Services
                 convolutionTasks = ConvertImageWithTasks(imageSource, tiles, 2, 0);
             }
 
-            img.SourceGrey50 = _fileManager.SaveBitMapToImage(grey50, HelperConstants.TransformImageResultPath, fileName + "_grey50");
-            img.SourceGrey80 = _fileManager.SaveBitMapToImage(grey80, HelperConstants.TransformImageResultPath, fileName + "_grey80");
-            img.SourceGrey100 = _fileManager.SaveBitMapToImage(grey100, HelperConstants.TransformImageResultPath, fileName + "_grey100");
-            img.SourcConvolutionTasks = _fileManager.SaveBitMapToImage(convolutionTasks, HelperConstants.TransformImageResultPath, fileName + "_convTasks");
+            img.SourceGrey50 = _fileManager.SaveBitMapToImage(grey50, ProjectConstants.TransformImageResultPath, fileName + "_grey50");
+            img.SourceGrey80 = _fileManager.SaveBitMapToImage(grey80, ProjectConstants.TransformImageResultPath, fileName + "_grey80");
+            img.SourceGrey100 = _fileManager.SaveBitMapToImage(grey100, ProjectConstants.TransformImageResultPath, fileName + "_grey100");
+            img.SourcConvolutionTasks = _fileManager.SaveBitMapToImage(convolutionTasks, ProjectConstants.TransformImageResultPath, fileName + "_convTasks");
 
             await _imageAlgorithm.CreateImageAsync(img);
             await _imageAlgorithm.SaveChangesAsync();
