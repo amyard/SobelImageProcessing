@@ -5,6 +5,7 @@ using SobelAlgImage.Infrastructure.Interfaces;
 using SobelAlgImage.Models.DataModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,6 +29,10 @@ namespace SobelAlgImage.Infrastructure.Services
         public async Task CreateImageAsync(ImageModel img, IFormFileCollection files)
         {
             Bitmap grey50, grey80, grey100, convolutionTasks;
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
 
             // generate new file name
             string fileName = Guid.NewGuid().ToString();
@@ -53,6 +58,11 @@ namespace SobelAlgImage.Infrastructure.Services
             }
             else
             {
+                //grey50 = ConvertImageWithShedulerTasks(imageSource, tiles, 1, 50);
+                //grey80 = ConvertImageWithShedulerTasks(imageSource, tiles, 1, 80);
+                //grey100 = ConvertImageWithShedulerTasks(imageSource, tiles, 1, 100);
+                //convolutionTasks = ConvertImageWithShedulerTasks(imageSource, tiles, 2, 0);
+
                 grey50 = ConvertImageWithTasks(imageSource, tiles, 1, 50);
                 grey80 = ConvertImageWithTasks(imageSource, tiles, 1, 80);
                 grey100 = ConvertImageWithTasks(imageSource, tiles, 1, 100);
@@ -67,11 +77,9 @@ namespace SobelAlgImage.Infrastructure.Services
             await _imageAlgorithm.CreateImageAsync(img);
             await _imageAlgorithm.SaveChangesAsync();
 
-            //grey50.Dispose();
-            //grey80.Dispose();
-            //grey100.Dispose();
-            //convolutionTasks.Dispose();
- 
+
+            stopwatch.Stop();
+            var asd = stopwatch.Elapsed;
         }
 
         public Bitmap ConvertImageWithTasks(Bitmap sourceOriginal, int tiles, int algorithmChooser, int greyScale)
@@ -80,24 +88,25 @@ namespace SobelAlgImage.Infrastructure.Services
             IEnumerable<Bitmap> collectedBitmaps = _fileManager.SplitBitmapsOnManyBitmaps(sourceOriginal, tiles);
 
             // create our tasks
-            var tasks = new List<Task>();
-            List<Bitmap> resultedListOfBitmaps = new Bitmap[tiles].ToList();
-            SobelAlgorithm imageProcessAlg = new SobelAlgorithm();
-
-            foreach (var i in Enumerable.Range(0, tiles))
-                tasks.Add(new Task(() =>
-                    resultedListOfBitmaps[i] = algorithmChooser == 1
-                                                    ? imageProcessAlg.SobelFilter(collectedBitmaps.ToList()[i], greyScale)
-                                                    : imageProcessAlg.ConvolutionFilter(collectedBitmaps.ToList()[i])));
-
-            foreach (var t in tasks)
-                t.Start();
-
-            Task.WaitAll(tasks.ToArray());
+            ParallelProcessHelper parallelProcessHelper = new ParallelProcessHelper();
+            List<Bitmap> resultedListOfBitmaps = parallelProcessHelper.ConverBitmapsWithTasks(collectedBitmaps, tiles, algorithmChooser, greyScale);
 
             Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(resultedListOfBitmaps, algorithmChooser);
+            
+            return resultBitmap;
+        }
 
-            //_fileManager.BitmapSaveTest(resultBitmap);
+        public Bitmap ConvertImageWithShedulerTasks(Bitmap sourceOriginal, int tiles, int algorithmChooser, int greyScale)
+        {
+            // split one bitmap by Y on many small bitmaps
+            int splitNumber = 20;
+            IEnumerable<Bitmap> collectedBitmaps = _fileManager.SplitBitmapsOnManyBitmaps(sourceOriginal, splitNumber);
+
+            // create our tasks
+            ParallelProcessHelper parallelProcessHelper = new ParallelProcessHelper();
+            List<Bitmap> resultedListOfBitmaps = parallelProcessHelper.ConverBitmapsWithSheduler(collectedBitmaps, tiles, algorithmChooser, greyScale, splitNumber);
+
+            Bitmap resultBitmap = _fileManager.MergeBitmapsInOne(resultedListOfBitmaps, algorithmChooser);
 
             return resultBitmap;
         }

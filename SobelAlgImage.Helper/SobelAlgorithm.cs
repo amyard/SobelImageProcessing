@@ -99,8 +99,8 @@ namespace SobelAlgImage.Helper
 
         public Bitmap ConvolutionFilter(Bitmap sourceImage)
         {
-            double[,] xkernel = xSobel;
-            double[,] ykernel = ySobel;
+            double[,] xkernel = new double[,] { { -1, 0, 1 },{ -2, 0, 2 },{ -1, 0, 1 } };
+            double[,] ykernel = new double[,] { {  1,  2,  1 },{  0,  0,  0 },{ -1, -2, -1 }  };
             //double factor = 1;
             //int bias = 0;
             bool grayscale = true;
